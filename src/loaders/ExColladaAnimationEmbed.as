@@ -10,6 +10,7 @@ package loaders
 	import away3dlite.templates.BasicTemplate;
 
 	import flash.display.*;
+	import flash.events.MouseEvent;
 	import flash.geom.Vector3D;
 	import flash.utils.*;
 
@@ -44,11 +45,12 @@ package loaders
 		[Embed(source = "assets/dae/nemuvine/table.png")]
 		private const clazz_5:Class;
 
+		private var _model:Object3D;
+
 		private function onSuccess(event:Loader3DEvent):void
 		{
-			var _model:Object3D = event.target["handle"];
+			_model = event.target["handle"];
 			_model.canvas = event.target["canvas"];
-			//_model.canvas.visible = false;
 
 			_bonesAnimator = _model.animationLibrary.getAnimation("default").animation as BonesAnimator;
 		}
@@ -74,15 +76,26 @@ package loaders
 			var dae:String = new _modelClazz();
 			var xml:XML = new XML(dae);
 			_loader3D.parseXML(xml, _collada);
-			//_loader3D.loadGeometry("../assets/dae/nemuvine/nemuvine.dae", _collada);
 			_loader3D.addEventListener(Loader3DEvent.LOAD_SUCCESS, onSuccess);
 
 			_loader3D.canvas = new Sprite();
 			view.addChild(_loader3D.canvas);
+
+			// test canvas visibility
+			stage.addEventListener(MouseEvent.CLICK, onClick);
+		}
+
+		protected function onClick(event:MouseEvent):void
+		{
+			_model.canvas.visible = !_model.canvas.visible;
 		}
 
 		override protected function onPreRender():void
 		{
+			// no update need if not visible
+			if (_model && !_model.canvas.visible)
+				return;
+
 			//update the collada animation
 			if (_bonesAnimator)
 				_bonesAnimator.update(getTimer() / 1000);
