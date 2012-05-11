@@ -101,7 +101,6 @@ package advances
 			_model.canvas = new Sprite();
 			view.addChild(_model.canvas);
 			_model.y = 10;
-			_model.canvas.visible = false;
 
 			_bonesAnimator = event.loader.handle.animationLibrary.getAnimation("default").animation as BonesAnimator;
 		}
